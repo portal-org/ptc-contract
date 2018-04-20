@@ -35,12 +35,11 @@ contract ERC20Token {
 
 contract PortalToken is ERC20Token {
     address public initialOwner;
-    uint256 public supply   = 1000000000 * 10 ** 18;  // 100, 000, 000
-    string  public name     = 'PortalToken';
+    uint256 public supply   = 1000000000 * 10 ** 18;  // 1,000,000,000
+    string  public name     = 'PortalCoin';
     uint8   public decimals = 18;
     string  public symbol   = 'PTC';
-    string  public version  = 'v0.1';
-    bool    public transfersEnabled = true;
+    string  public version  = 'v0.2';
     uint    public creationBlock;
     uint    public creationTime;
 
@@ -69,13 +68,10 @@ contract PortalToken is ERC20Token {
         // `revert()` | `throw`
         //      http://solidity.readthedocs.io/en/develop/control-structures.html#error-handling-assert-require-revert-and-exceptions
         //      https://ethereum.stackexchange.com/questions/20978/why-do-throw-and-revert-create-different-bytecodes/20981
-        if (!transfersEnabled) revert();
         return doTransfer(msg.sender, _to, _value);
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-        if (!transfersEnabled) revert();
-
         if (allowance(_from, msg.sender) < _value) revert();
 
         m_allowance[_from][msg.sender] -= _value;
@@ -100,8 +96,6 @@ contract PortalToken is ERC20Token {
     }
 
     function approve(address _spender, uint256 _value) public returns (bool success) {
-        if (!transfersEnabled) revert();
-
         // https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
         if ( (_value != 0) && (allowance(msg.sender, _spender) != 0) ) revert();
 
@@ -113,15 +107,7 @@ contract PortalToken is ERC20Token {
     }
 
     function allowance(address _owner, address _spender) constant public returns (uint256) {
-        if (!transfersEnabled) revert();
-
         return m_allowance[_owner][_spender];
-    }
-
-    function enableTransfers(bool _transfersEnabled) public returns (bool) {
-        if (msg.sender != initialOwner) revert();
-        transfersEnabled = _transfersEnabled;
-        return transfersEnabled;
     }
 
 }
