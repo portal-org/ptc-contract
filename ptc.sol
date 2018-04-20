@@ -88,7 +88,7 @@ contract PortalToken is ERC20Token {
         if (balance[_from] >= _value && balance[_to] + _value >= balance[_to]) {
             balance[_from] -= _value;
             balance[_to] += _value;
-            Transfer(_from, _to, _value);
+            emit Transfer(_from, _to, _value);
             return true;
         } else {
             return false;
