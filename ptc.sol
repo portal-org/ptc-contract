@@ -38,7 +38,7 @@ contract PortalToken is ERC20Token {
     uint256 public supply   = 1000000000 * 10 ** 18;  // 1,000,000,000
     string  public name     = 'PortalToken';
     uint8   public decimals = 18;
-    string  public symbol   = 'PTC';
+    string  public symbol   = 'PORTAL';
     string  public version  = 'v0.2';
     uint    public creationBlock;
     uint    public creationTime;
