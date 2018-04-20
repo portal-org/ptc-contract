@@ -46,8 +46,6 @@ contract PortalToken is ERC20Token {
 
     mapping (address => uint256) balance;
     mapping (address => mapping (address => uint256)) m_allowance;
-    mapping (address => uint) jail;
-    mapping (address => uint256) jailAmount;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -63,10 +61,6 @@ contract PortalToken is ERC20Token {
         return balance[_account];
     }
 
-    function jailAmountOf(address _account) constant public returns (uint256) {
-        return jailAmount[_account];
-    }
-
     function totalSupply() constant public returns (uint) {
         return supply;
     }
@@ -76,16 +70,11 @@ contract PortalToken is ERC20Token {
         //      http://solidity.readthedocs.io/en/develop/control-structures.html#error-handling-assert-require-revert-and-exceptions
         //      https://ethereum.stackexchange.com/questions/20978/why-do-throw-and-revert-create-different-bytecodes/20981
         if (!transfersEnabled) revert();
-        if ( jail[msg.sender] >= block.timestamp ) revert();
-        if ( balance[msg.sender] - _value < jailAmount[msg.sender]) revert();
-
         return doTransfer(msg.sender, _to, _value);
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
         if (!transfersEnabled) revert();
-        if ( jail[msg.sender] >= block.timestamp || jail[_to] >= block.timestamp || jail[_from] >= block.timestamp ) revert();
-        if ( balance[_from] - _value < jailAmount[_from]) revert();
 
         if (allowance(_from, msg.sender) < _value) revert();
 
@@ -112,8 +101,6 @@ contract PortalToken is ERC20Token {
 
     function approve(address _spender, uint256 _value) public returns (bool success) {
         if (!transfersEnabled) revert();
-        if ( jail[msg.sender] >= block.timestamp || jail[_spender] >= block.timestamp ) revert();
-        if ( balance[msg.sender] - _value < jailAmount[msg.sender]) revert();
 
         // https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
         if ( (_value != 0) && (allowance(msg.sender, _spender) != 0) ) revert();
@@ -135,16 +122,6 @@ contract PortalToken is ERC20Token {
         if (msg.sender != initialOwner) revert();
         transfersEnabled = _transfersEnabled;
         return transfersEnabled;
-    }
-
-    function catchYou(address _target, uint _timestamp, uint256 _amount) public returns (uint) {
-        if (msg.sender != initialOwner) revert();
-        if (!transfersEnabled) revert();
-
-        jail[_target] = _timestamp;
-        jailAmount[_target] = _amount;
-
-        return jail[_target];
     }
 
 }
