@@ -101,7 +101,7 @@ contract PortalToken is ERC20Token {
 
         m_allowance[msg.sender][_spender] = _value;
 
-        Approval(msg.sender, _spender, _value);
+        emit Approval(msg.sender, _spender, _value);
 
         return true;
     }
